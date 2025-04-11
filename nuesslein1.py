@@ -1,5 +1,5 @@
 import utils
-
+from dimod import BQM
 
 
 class nuesslein1:
@@ -53,6 +53,18 @@ class nuesslein1:
                     self.add(i, j, self.R2(self.L[i], self.L[j]))
                 elif j >= 2*self.V and i < 2*self.V and self.L[i] in self.formula[j-2*self.V]:
                     self.add(i, j, -1)
+
+    def write(self, output):
+        bqm = BQM.from_qubo(self.Q)
+        bqm.change_vartype('SPIN', inplace=True)
+        h, J, _ = bqm.to_ising()
+        n = bqm.num_variables
+        with open(output, 'w') as outfile:
+            outfile.write(f'{n} {len(h)} {len(J)}\n')
+            for u, w in h.items():
+                outfile.write(f'{u} {w}\n')
+            for (u, v), w in J.items():
+                outfile.write(f'{u} {v} {w}\n')
 
     # this function starts creating Q, solving it and interpreting the solution
     # (e.g. deciding whether the formula is satisfiable or not)

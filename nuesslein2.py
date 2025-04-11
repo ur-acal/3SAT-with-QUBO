@@ -1,6 +1,6 @@
 import utils
 import numpy as np
-
+from dimod import BQM
 
 
 class nuesslein2:
@@ -57,6 +57,19 @@ class nuesslein2:
                 self.add(c[2], c[2], -1)
                 self.add(c[2], self.V + i + 1, 1)
                 self.add(self.V + i + 1, self.V + i + 1, -1)
+
+    def write(self, output):
+        bqm = BQM.from_qubo(self.Q)
+        bqm.change_vartype('SPIN', inplace=True)
+        h, J, _ = bqm.to_ising()
+        n = bqm.num_variables
+        with open(output, 'w') as outfile:
+            outfile.write(f'{n} {len(h)} {len(J)}\n')
+            for u, w in h.items():
+                outfile.write(f'{u} {w}\n')
+            for (u, v), w in J.items():
+                outfile.write(f'{u} {v} {w}\n')
+
 
     # this function starts creating Q, solving it and interpreting the solution
     # (e.g. deciding whether the formula is satisfiable or not)

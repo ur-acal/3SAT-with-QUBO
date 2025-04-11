@@ -1,0 +1,19 @@
+{
+    "num_sweeps": 50000,
+    "num_reads": 50,
+    "num_replicas": -1,
+    "min_temp": 0.3,
+    "max_temp": 1.5,
+    "update_strategy": "random",
+    "initialize_strategy": "random",
+    "init_energies": -1,
+    "recompute_energy": 0,
+    "sort_output_temps": 0,
+    "return_dataframe": 1,
+    "parallel": 1,
+    "use_pt": 1,
+    "send_background": 0,
+    "verbose": 0,
+    "get_part_fun": 0,
+    "beta0": 0
+}

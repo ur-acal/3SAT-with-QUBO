@@ -1,5 +1,6 @@
-from dwave_qbsolv import QBSolv
+# from dwave_qbsolv import QBSolv
 import numpy as np
+from neal import SimulatedAnnealingSampler
 
 
 
@@ -14,10 +15,25 @@ def create_formula(num_vars, num_clauses, k):
 
     return formula
 
+def read_formula(path):
+    with open(path) as infile:
+        formula = []
+        for line in infile:
+            line = line.strip()
+            if line == '' or line[0] == 'c':
+                continue
+            if line[0] == 'p':
+                n, m = map(int, line.split()[2:])
+                continue
+            if line[0] == '%':
+                break
+            args = line.split()[:-1]
+            formula.append(np.array(list(map(int, args))))
+        return n, m, formula
 
 # this function solves a given QUBO-Matrix Q with Qbsolv
 def solve_with_qbsolv(Q):
-    response = QBSolv().sample_qubo(Q, num_repeats=1000)
+    response = SimulatedAnnealingSampler().sample_qubo(Q, num_sweeps=20000,num_repeats=1000)
     return response.samples()[0]
 
 
@@ -54,10 +70,10 @@ def check_solution(formula, assignment):
     n = 0
     for c in formula:
         for l in c:
-            if l < 0 and assignment[abs(l)-1] == 0:
+            if l < 0 and int(assignment[abs(l)-1]) == 0:
                 n += 1
                 break
-            elif l > 0 and assignment[abs(l)-1] == 1:
+            elif l > 0 and int(assignment[abs(l)-1]) == 1:
                 n += 1
                 break
     return n
